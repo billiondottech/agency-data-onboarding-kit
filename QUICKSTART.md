@@ -2,7 +2,7 @@
 
 > **Turn messy client data into clean, actionable intelligence in under 30 minutes**
 
-A complete toolkit for AI automation agencies to onboard client data without the manual headache. Built by the [Billion community](https://billion.community) for agency operators who want to ship fast and iterate publicly.
+A complete toolkit for AI automation agencies to onboard client data without the manual headache. Built by the [Billion community](https://billion-blog.com) for agency operators who want to ship fast and iterate publicly.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/billiondottech/agency-data-onboarding-kit/blob/main/notebooks/learn_polars_cleaning.ipynb)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -375,7 +375,7 @@ echo $PROJECT_PATH
    - [GitHub Issues](https://github.com/billion-community/agency-data-onboarding-kit/issues)
 
 3. 📧 Email us:
-   - hello@billion.community
+   - billionblog@dreamhuggers.com
 
 ---
 
@@ -396,7 +396,7 @@ Now that your pipeline works:
 **Want to go deeper?**
 
 - 📖 **Read the detailed READMEs** in each folder
-- 🎓 **Get the complete playbook** at [billion.community](https://billion.community)
+- 🎓 **Get the complete playbook** at [billion-blog.com](https://billion-blog.com)
 - 🔬 **Experiment** - Modify the scripts, break things, learn
 - 💬 **Share** - Show the community what you built
 

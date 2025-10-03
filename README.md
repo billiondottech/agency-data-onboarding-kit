@@ -2,7 +2,7 @@
 
 > **Turn messy client data into clean, actionable intelligence in under 30 minutes**
 
-A complete toolkit for AI automation agencies to onboard client data without the manual headache. Built by the [Billion community](https://billion.community) for agency operators who want to ship fast and iterate publicly.
+A complete toolkit for AI automation agencies to onboard client data without the manual headache. Built by the [Billion community](https://billion-blog.com) for agency operators who want to ship fast and iterate publicly.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/billion-community/agency-data-onboarding-kit/blob/main/notebooks/learn_polars_cleaning.ipynb)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -82,7 +82,7 @@ Detailed guides in every folder:
 - `/n8n/README.md` - Workflow configuration (600+ lines)
 - `QUICKSTART.md` - Get running in 30 minutes
 
-**Want the complete 12-page playbook PDF?** Get it at [billion.community](https://billion.community) (lead magnet)
+**Want the complete 12-page playbook PDF?** Get it at [billion-blog.com](https://billion-blog.com) (lead magnet)
 
 ---
 
@@ -256,7 +256,7 @@ agency-data-onboarding-kit/
 └── LICENSE                             # MIT License
 ```
 
-**Note:** The complete 12-page playbook PDF is available as a lead magnet at [billion.community](https://billion.community)
+**Note:** The complete 12-page playbook PDF is available as a lead magnet at [billion-blog.com](https://billion-blog.com)
 
 ---
 
@@ -266,9 +266,9 @@ agency-data-onboarding-kit/
 1. Read [QUICKSTART.md](QUICKSTART.md) for a 30-minute guided setup
 2. Open the **[Colab Notebook](https://colab.research.google.com/github/billiondottech/agency-data-onboarding-kit/blob/main/notebooks/learn_polars_cleaning.ipynb)** and run with sample data
 3. Watch what each transformation does
-4. Ask questions in the **[Billion Community](https://billion.community)**
+4. Ask questions in the **[Billion Community](https://billion-blog.com)**
 
-**Want the complete playbook?** Get the 12-page PDF at [billion.community](https://billion.community)
+**Want the complete playbook?** Get the 12-page PDF at [billion-blog.com](https://billion-blog.com)
 
 ### For Python-Curious Operators
 1. Start with [QUICKSTART.md](QUICKSTART.md) for setup
@@ -415,14 +415,14 @@ We're building this in public with the Billion community!
 ## 💬 Get Help & Connect
 
 ### Join the Community
-- **📱 WhatsApp Group**: [Join Billion Community](https://billion.community) - Daily discussions, troubleshooting, wins
-- **📧 Newsletter**: [Subscribe at billion.community](https://billion.community) - Deep dives, case studies, module updates  
-- **🌐 Website**: [billion.community](https://billion.community) - Courses, resources, community
+- **📱 WhatsApp Group**: [Join Billion Community](https://billion-blog.com) - Daily discussions, troubleshooting, wins
+- **📧 Newsletter**: [Subscribe at billion-blog.com](https://billion-blog.com) - Deep dives, case studies, module updates  
+- **🌐 Website**: [billion-blog.com](https://billion-blog.com) - Courses, resources, community
 
 ### Questions?
 - **GitHub Issues**: For bugs and feature requests
 - **WhatsApp**: For quick help and community support  
-- **Email**: hello@billion.community
+- **Email**: billionblog@dreamhuggers.com
 
 ---
 
@@ -436,7 +436,7 @@ See [LICENSE](LICENSE) for full details.
 
 ## 🙏 Acknowledgments
 
-Built with ❤️ by the [Billion community](https://billion.community) - training 1 billion vibecoders to generate over $1 billion in revenue with AI automations.
+Built with ❤️ by the [Billion community](https://billion-blog.com) - training 1 billion vibecoders to generate over $1 billion in revenue with AI automations.
 
 **Special thanks to:**
 - Early testers who broke things and helped us fix them
