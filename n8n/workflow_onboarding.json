@@ -1,0 +1,581 @@
+{
+  "name": "Client Data Onboarding Pipeline",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "path": "={{$env.PROJECT_PATH}}/incoming",
+        "options": {}
+      },
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "List CSV Files",
+      "type": "n8n-nodes-base.readBinaryFiles",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "notes": "Scans the /incoming folder for CSV files"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.fileName}}",
+              "operation": "endsWith",
+              "value2": ".csv"
+            }
+          ]
+        }
+      },
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+      "name": "Check CSV Files",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "notes": "Only process .csv files"
+    },
+    {
+      "parameters": {
+        "message": "=No CSV files found in /incoming/\n\nPlease add CSV files and try again."
+      },
+      "id": "d4e5f6a7-b8c9-0123-def1-234567890123",
+      "name": "No Files Found",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [900, 480],
+      "notes": "Stop if no CSV files"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Prepare file metadata for cleaning\nconst fileName = $input.item.json.fileName;\nconst fileType = fileName.includes('contact') ? 'contacts' : 'accounts';\nconst inputPath = `incoming/${fileName}`;\nconst outputPath = `incoming/${fileName.replace('.csv', '_clean.csv')}`;\n\nreturn {\n  fileName: fileName,\n  fileType: fileType,\n  inputPath: inputPath,\n  outputPath: outputPath\n};"
+      },
+      "id": "e5f6a7b8-c9d0-1234-ef12-345678901234",
+      "name": "Prepare File Metadata",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300],
+      "notes": "Determine if contacts or accounts CSV"
+    },
+    {
+      "parameters": {
+        "command": "=cd {{$env.PROJECT_PATH}}/scripts && source venv/bin/activate && python clean_{{$json.fileType}}.py --input ../{{$json.inputPath}} --output ../{{$json.outputPath}}",
+        "options": {}
+      },
+      "id": "f6a7b8c9-d0e1-2345-f123-456789012345",
+      "name": "Run Python Cleaning Script",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1120, 300],
+      "notes": "Calls clean_contacts.py or clean_accounts.py"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.code}}",
+              "value2": "0"
+            }
+          ]
+        }
+      },
+      "id": "a7b8c9d0-e1f2-3456-1234-567890123456",
+      "name": "Check Cleaning Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 300],
+      "notes": "Check if Python script succeeded"
+    },
+    {
+      "parameters": {
+        "message": "=Cleaning script failed for: {{$json.fileName}}\n\nError: {{$json.stderr}}"
+      },
+      "id": "b8c9d0e1-f2a3-4567-2345-678901234567",
+      "name": "Cleaning Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [1560, 480],
+      "notes": "Stop if cleaning failed"
+    },
+    {
+      "parameters": {
+        "path": "={{$env.PROJECT_PATH}}/{{$('Prepare File Metadata').item.json.outputPath}}",
+        "options": {
+          "encoding": "utf8"
+        }
+      },
+      "id": "c9d0e1f2-a3b4-5678-3456-789012345678",
+      "name": "Read Clean CSV",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [1560, 300],
+      "notes": "Load the cleaned CSV"
+    },
+    {
+      "parameters": {
+        "mode": "jsonToCsv",
+        "options": {}
+      },
+      "id": "d0e1f2a3-b4c5-6789-4567-890123456789",
+      "name": "CSV to JSON",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1,
+      "position": [1780, 300],
+      "notes": "Convert CSV to JSON for Supabase"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$('Prepare File Metadata').item.json.fileType}}",
+              "value2": "accounts"
+            }
+          ]
+        }
+      },
+      "id": "e1f2a3b4-c5d6-7890-5678-901234567890",
+      "name": "Route By Type",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2000, 300],
+      "notes": "Route to accounts or contacts table"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": "accounts",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "name",
+              "fieldValue": "={{$json.name}}"
+            },
+            {
+              "fieldId": "website",
+              "fieldValue": "={{$json.website}}"
+            },
+            {
+              "fieldId": "domain",
+              "fieldValue": "={{$json.domain}}"
+            },
+            {
+              "fieldId": "industry",
+              "fieldValue": "={{$json.industry}}"
+            },
+            {
+              "fieldId": "employee_count",
+              "fieldValue": "={{$json.employee_count}}"
+            },
+            {
+              "fieldId": "billing_country",
+              "fieldValue": "={{$json.country}}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{$json.status || 'prospect'}}"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "={{$json.source || 'sheet'}}"
+            }
+          ]
+        },
+        "onConflict": "domain",
+        "options": {}
+      },
+      "id": "f2a3b4c5-d6e7-8901-6789-012345678901",
+      "name": "Upsert to Accounts",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [2220, 180],
+      "notes": "Insert/Update accounts by domain",
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": "contacts",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "full_name",
+              "fieldValue": "={{$json.full_name}}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{$json.email}}"
+            },
+            {
+              "fieldId": "title",
+              "fieldValue": "={{$json.title}}"
+            },
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{$json.phone}}"
+            },
+            {
+              "fieldId": "linkedin_url",
+              "fieldValue": "={{$json.linkedin}}"
+            },
+            {
+              "fieldId": "country",
+              "fieldValue": "={{$json.country}}"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "={{$json.source || 'sheet'}}"
+            }
+          ]
+        },
+        "onConflict": "email",
+        "options": {}
+      },
+      "id": "a3b4c5d6-e7f8-9012-7890-123456789012",
+      "name": "Upsert to Contacts",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [2220, 420],
+      "notes": "Insert/Update contacts by email",
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "table": "accounts",
+        "returnAll": false,
+        "limit": 1,
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "domain",
+              "keyValue": "={{$json.email_domain}}"
+            }
+          ]
+        }
+      },
+      "id": "b4c5d6e7-f8a9-0123-8901-234567890123",
+      "name": "Find Account by Domain",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [2440, 420],
+      "notes": "Link contact to account",
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "contacts",
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "keyValue": "={{$('Upsert to Contacts').item.json.email}}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "account_id",
+              "fieldValue": "={{$json.id}}"
+            }
+          ]
+        }
+      },
+      "id": "c5d6e7f8-a9b0-1234-9012-345678901234",
+      "name": "Link Contact to Account",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [2660, 420],
+      "notes": "Update contact with account_id",
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Generate run report\nconst timestamp = new Date().toISOString();\nconst fileName = $('Prepare File Metadata').first().json.fileName;\nconst fileType = $('Prepare File Metadata').first().json.fileType;\n\n// Parse cleaning output (from Python script stdout)\nconst cleaningOutput = $('Run Python Cleaning Script').first().json.stdout;\n\n// Extract statistics from output\nconst originalMatch = cleaningOutput.match(/Original rows:\\s+(\\d+)/);\nconst invalidMatch = cleaningOutput.match(/Invalid.*filtered:\\s+(\\d+)/);\nconst duplicatesMatch = cleaningOutput.match(/Duplicates removed:\\s+(\\d+)/);\nconst finalMatch = cleaningOutput.match(/Final clean rows:\\s+(\\d+)/);\nconst retainedMatch = cleaningOutput.match(/Data retained:\\s+([\\d.]+)%/);\n\nconst stats = {\n  original_count: originalMatch ? parseInt(originalMatch[1]) : 0,\n  invalid_filtered: invalidMatch ? parseInt(invalidMatch[1]) : 0,\n  duplicates_removed: duplicatesMatch ? parseInt(duplicatesMatch[1]) : 0,\n  final_count: finalMatch ? parseInt(finalMatch[1]) : 0,\n  data_retained_pct: retainedMatch ? parseFloat(retainedMatch[1]) : 0\n};\n\n// Count items uploaded to Supabase\nconst uploadedCount = fileType === 'accounts' \n  ? $('Upsert to Accounts').all().length\n  : $('Upsert to Contacts').all().length;\n\n// Generate markdown report\nconst report = `# Pipeline Run Report\n\n**Timestamp:** ${timestamp}  \n**File:** ${fileName}  \n**Type:** ${fileType}\n\n---\n\n## Summary\n\n- **Original rows:** ${stats.original_count}\n- **Invalid filtered:** ${stats.invalid_filtered}\n- **Duplicates removed:** ${stats.duplicates_removed}\n- **Final clean rows:** ${stats.final_count}\n- **Uploaded to Supabase:** ${uploadedCount}\n- **Data retained:** ${stats.data_retained_pct}%\n\n---\n\n## Pipeline Steps\n\n✅ File detected: \\`${fileName}\\`  \n✅ Cleaning script executed  \n✅ Data validated and deduplicated  \n✅ Uploaded to Supabase \\`${fileType}\\` table  \n${fileType === 'contacts' ? '✅ Contacts linked to accounts  \\n' : ''}\n---\n\n## Next Steps\n\n- Review data in Supabase Table Editor\n- Run quality checks on uploaded data\n- Archive original file from /incoming/\n\n---\n\n*Generated by Agency Data Onboarding Pipeline*\n`;\n\nreturn {\n  timestamp,\n  fileName,\n  fileType,\n  stats,\n  uploadedCount,\n  report\n};"
+      },
+      "id": "d6e7f8a9-b0c1-2345-0123-456789012345",
+      "name": "Generate Run Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2880, 300],
+      "notes": "Create markdown summary report"
+    },
+    {
+      "parameters": {
+        "fileName": "=runs/{{$json.timestamp.replace(/:/g, '-').split('.')[0]}}_{{$json.fileName.replace('.csv', '')}}_report.md",
+        "fileContent": "={{$json.report}}",
+        "options": {
+          "encoding": "utf8"
+        }
+      },
+      "id": "e7f8a9b0-c1d2-3456-1234-567890123456",
+      "name": "Save Report to File",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [3100, 300],
+      "notes": "Save report to /runs/ folder"
+    },
+    {
+      "parameters": {
+        "command": "=mv {{$env.PROJECT_PATH}}/{{$('Prepare File Metadata').item.json.inputPath}} {{$env.PROJECT_PATH}}/archive/$(date +%Y-%m-%d)/",
+        "options": {}
+      },
+      "id": "f8a9b0c1-d2e3-4567-2345-678901234567",
+      "name": "Archive Original File",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [3320, 300],
+      "notes": "Move processed CSV to archive folder"
+    },
+    {
+      "parameters": {},
+      "id": "a9b0c1d2-e3f4-5678-3456-789012345678",
+      "name": "Pipeline Complete",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [3540, 300],
+      "notes": "End of pipeline"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "List CSV Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List CSV Files": {
+      "main": [
+        [
+          {
+            "node": "Check CSV Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check CSV Files": {
+      "main": [
+        [
+          {
+            "node": "Prepare File Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Files Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare File Metadata": {
+      "main": [
+        [
+          {
+            "node": "Run Python Cleaning Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Python Cleaning Script": {
+      "main": [
+        [
+          {
+            "node": "Check Cleaning Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Cleaning Success": {
+      "main": [
+        [
+          {
+            "node": "Read Clean CSV",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cleaning Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Clean CSV": {
+      "main": [
+        [
+          {
+            "node": "CSV to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CSV to JSON": {
+      "main": [
+        [
+          {
+            "node": "Route By Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route By Type": {
+      "main": [
+        [
+          {
+            "node": "Upsert to Accounts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upsert to Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert to Accounts": {
+      "main": [
+        [
+          {
+            "node": "Generate Run Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert to Contacts": {
+      "main": [
+        [
+          {
+            "node": "Find Account by Domain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Account by Domain": {
+      "main": [
+        [
+          {
+            "node": "Link Contact to Account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Link Contact to Account": {
+      "main": [
+        [
+          {
+            "node": "Generate Run Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Run Report": {
+      "main": [
+        [
+          {
+            "node": "Save Report to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Report to File": {
+      "main": [
+        [
+          {
+            "node": "Archive Original File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Archive Original File": {
+      "main": [
+        [
+          {
+            "node": "Pipeline Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-01-15T00:00:00.000Z",
+  "versionId": "1"
+}

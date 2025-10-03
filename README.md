@@ -4,7 +4,7 @@
 
 A complete toolkit for AI automation agencies to onboard client data without the manual headache. Built by the [Billion community](https://billion.community) for agency operators who want to ship fast and iterate publicly.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/billiondottech/agency-data-onboarding-kit/blob/main/notebooks/learn_polars_cleaning.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/billion-community/agency-data-onboarding-kit/blob/main/notebooks/learn_polars_cleaning.ipynb)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -45,7 +45,7 @@ Start here! A Google Colab notebook that teaches you Polars interactively.
 - Upload your own messy CSV
 - See each transformation step-by-step
 - Understand the logic before automating
-- **[👉 Open in Colab](link-to-notebook)**
+- **[👉 Open in Colab](https://colab.research.google.com/github/billiondottech/agency-data-onboarding-kit/blob/main/notebooks/learn_polars_cleaning.ipynb)**
 
 ### 2. **Production Scripts** 🐍
 Ready-to-run Python scripts for automation:
@@ -74,12 +74,15 @@ Realistic messy CSVs to practice with:
 - `contacts_messy.csv` - 41 contacts with duplicates
 - `hubspot_contacts.csv` - HubSpot export format
 
-### 6. **Complete Playbook** 📖
-12-page guide covering:
-- Why this stack (Polars + n8n + Supabase)
-- Step-by-step setup instructions
-- Troubleshooting common issues
-- Security & compliance best practices
+### 6. **Complete Documentation** 📖
+Detailed guides in every folder:
+- `/notebooks/README.md` - Colab notebook guide
+- `/scripts/README.md` - Python script usage (400+ lines)
+- `/supabase/README.md` - Database setup & queries (400+ lines)
+- `/n8n/README.md` - Workflow configuration (600+ lines)
+- `QUICKSTART.md` - Get running in 30 minutes
+
+**Want the complete 12-page playbook PDF?** Get it at [billion.community](https://billion.community) (lead magnet)
 
 ---
 
@@ -94,7 +97,7 @@ Realistic messy CSVs to practice with:
 4. Understand what each transformation does
 
 ### Option 2: Full Pipeline Setup
-**Time: 30 minutes**
+**Time: 30 minutes** (or follow [QUICKSTART.md](QUICKSTART.md))
 
 #### Prerequisites
 - Python 3.9+
@@ -216,53 +219,73 @@ Acme Corp,acme-corp.com,United States
 
 ```
 agency-data-onboarding-kit/
-├── README.md                    # You are here
+├── README.md                           # You are here
+├── QUICKSTART.md                       # 30-minute setup guide
+│
 ├── notebooks/
-│   └── learn_polars_cleaning.ipynb   # Interactive learning
+│   ├── README.md                       # Notebook usage guide
+│   └── learn_polars_cleaning.ipynb     # Interactive learning
+│
 ├── scripts/
-│   ├── clean_accounts.py        # Account cleaning logic
-│   ├── clean_contacts.py        # Contact cleaning logic
-│   ├── utils.py                 # Shared utilities
-│   └── requirements.txt         # Python dependencies
+│   ├── README.md                       # Python guide (400+ lines)
+│   ├── clean_accounts.py               # Account cleaning logic
+│   ├── clean_contacts.py               # Contact cleaning logic
+│   ├── utils.py                        # Shared utilities
+│   └── requirements.txt                # Python dependencies
+│
 ├── n8n/
-│   └── workflow_onboarding.json # Importable workflow
+│   ├── README.md                       # Workflow guide (600+ lines)
+│   └── workflow_onboarding.json        # Importable workflow
+│
 ├── supabase/
-│   ├── schema.sql               # Database schema
-│   └── seed_do_not_contact.sql  # Sample DNC list
+│   ├── README.md                       # Database guide (400+ lines)
+│   ├── schema.sql                      # Database schema
+│   └── seed_do_not_contact.sql         # Sample DNC list
+│
 ├── samples/
-│   ├── accounts_messy.csv       # Sample company data
-│   ├── contacts_messy.csv       # Sample contact data
-│   └── hubspot_contacts.csv     # HubSpot export format
-├── incoming/                    # Drop CSVs here
-├── runs/                        # Run reports saved here
-├── docs/
-│   └── playbook.pdf            # Complete 12-page guide
-├── .env.example                 # Environment variables template
-└── .gitignore
+│   ├── accounts_messy.csv              # Sample company data
+│   ├── contacts_messy.csv              # Sample contact data
+│   └── hubspot_contacts.csv            # HubSpot export format
+│
+├── incoming/                           # Drop CSVs here (you create)
+├── runs/                               # Run reports saved here (you create)
+├── archive/                            # Processed files archived here (you create)
+│
+├── .env.example                        # Environment variables template
+├── .gitignore                          # Git ignore rules
+└── LICENSE                             # MIT License
 ```
+
+**Note:** The complete 12-page playbook PDF is available as a lead magnet at [billion.community](https://billion.community)
 
 ---
 
 ## 🎓 Learning Path
 
 ### For Complete Beginners
-1. Read the **[Playbook PDF](docs/playbook.pdf)** (Sections 1-3)
-2. Open the **[Colab Notebook](link)** and run with sample data
+1. Read [QUICKSTART.md](QUICKSTART.md) for a 30-minute guided setup
+2. Open the **[Colab Notebook](https://colab.research.google.com/github/billiondottech/agency-data-onboarding-kit/blob/main/notebooks/learn_polars_cleaning.ipynb)** and run with sample data
 3. Watch what each transformation does
-4. Ask questions in the **[Billion Community](link)**
+4. Ask questions in the **[Billion Community](https://billion.community)**
+
+**Want the complete playbook?** Get the 12-page PDF at [billion.community](https://billion.community)
 
 ### For Python-Curious Operators
-1. Skim the Playbook (you'll get the concepts quickly)
+1. Start with [QUICKSTART.md](QUICKSTART.md) for setup
 2. Run the Colab notebook with your own data
 3. Modify a few cells to match your needs
 4. Set up the full pipeline when ready
 
+**Pro tip:** All scripts have detailed READMEs in their folders!
+
 ### For Technical Folks
-1. Clone the repo
-2. Read `scripts/clean_contacts.py` (well-commented)
-3. Set up n8n + Supabase
+1. Follow [QUICKSTART.md](QUICKSTART.md) for 30-min setup
+2. Read `scripts/clean_contacts.py` (well-commented, 250 lines)
+3. Check detailed READMEs in `/scripts/`, `/supabase/`, `/n8n/`
 4. Run the full pipeline
 5. Customize for your stack
+
+Each folder has comprehensive documentation (400-600 lines) with troubleshooting!
 
 ---
 
@@ -392,13 +415,13 @@ We're building this in public with the Billion community!
 ## 💬 Get Help & Connect
 
 ### Join the Community
-- **📱 WhatsApp Group**: [Join here](link) - Daily discussions, troubleshooting, wins
-- **📧 Newsletter**: [Subscribe](link) - Deep dives, case studies, module updates
-- **🎓 Course Waitlist**: [Sign up](link) - Full certification program coming soon
+- **📱 WhatsApp Group**: [Join Billion Community](https://billion.community) - Daily discussions, troubleshooting, wins
+- **📧 Newsletter**: [Subscribe at billion.community](https://billion.community) - Deep dives, case studies, module updates  
+- **🌐 Website**: [billion.community](https://billion.community) - Courses, resources, community
 
 ### Questions?
 - **GitHub Issues**: For bugs and feature requests
-- **WhatsApp**: For quick help and community support
+- **WhatsApp**: For quick help and community support  
 - **Email**: hello@billion.community
 
 ---
@@ -413,7 +436,7 @@ See [LICENSE](LICENSE) for full details.
 
 ## 🙏 Acknowledgments
 
-Built with ❤️ by the [Billion community](https://billion-blog.com) - training 1 billion vibecoders to generate over $1 billion in revenue with AI automations.
+Built with ❤️ by the [Billion community](https://billion.community) - training 1 billion vibecoders to generate over $1 billion in revenue with AI automations.
 
 **Special thanks to:**
 - Early testers who broke things and helped us fix them
@@ -426,7 +449,7 @@ Built with ❤️ by the [Billion community](https://billion-blog.com) - trainin
 
 **Right now, before you close this tab:**
 
-1. **[⭐ Star this repo](https://github.com/billiondottech/agency-data-onboarding-kit)** - so you can find it later
+1. **[⭐ Star this repo](https://github.com/billion-community/agency-data-onboarding-kit)** - so you can find it later
 2. **[📓 Open the Colab notebook](link)** - see it work in 15 minutes
 3. **[💬 Join the community](link)** - share your results, get help
 
